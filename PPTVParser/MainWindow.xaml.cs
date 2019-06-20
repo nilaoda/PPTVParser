@@ -199,7 +199,7 @@ namespace PPTVParser
 
             if (saveFileDialog1.ShowDialog() == true) 
             {
-                string headers = "User-Agent:Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Mobile Safari/537.36";
+                string headers = "User-Agent:Mozilla/5.0 (Linux; U; Android 7.1.2; zh-cn; M6 Note Build/N2G47H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.6 Mobile Safari/537.36";
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("@echo off");
                 sb.AppendLine("::Created by PPTVParser");
@@ -220,7 +220,7 @@ namespace PPTVParser
             if (results.Count == 0)
                 return;
             string dir = "";
-            string headers = "User-Agent:Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Mobile Safari/537.36";
+            string headers = "Mozilla/5.0 (Linux; U; Android 7.1.2; zh-cn; M6 Note Build/N2G47H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.6 Mobile Safari/537.36";
             FolderBrowserDialog openFileDialog = new FolderBrowserDialog();  //选择文件夹
             openFileDialog.Description = "选择一个目录，视频将会下载到此处";
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
