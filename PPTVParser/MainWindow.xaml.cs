@@ -31,7 +31,7 @@ namespace PPTVParser
             {
                 HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
                 webRequest.Method = "GET";
-                //webRequest.UserAgent = "Mozilla/4.0";
+                webRequest.UserAgent = "Mozilla/4.0";
                 webRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
                 webRequest.Timeout = TimeOut;  //设置超时  
                 webRequest.KeepAlive = false;
@@ -127,10 +127,44 @@ namespace PPTVParser
             TextBox_Result.Text = "";
             string input = TextBox_Input.Text.Trim();
             results.Clear();
+            int dfn = 4;
+            if (Radio_0.IsChecked == true) dfn = 0;
+            if (Radio_1.IsChecked == true) dfn = 1;
+            if (Radio_2.IsChecked == true) dfn = 2;
+            if (Radio_3.IsChecked == true) dfn = 3;
+            if (Radio_4.IsChecked == true) dfn = 4;
             ThreadPool.QueueUserWorkItem((object state) =>
             {
                 try
                 {
+                    if (input.Contains("/page/")) //批量
+                    {
+                        this.Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            string pid = GetVidFromUrl(input.Split('\n')[0]);
+                            string webSource = GetWebSource(
+                                $"http://apis.web.pptv.com/show/videoList?from=web&version=1.0.0&format=jsonp&pid={pid}&cat_id=2&vt=22&tdsourcetag=s_pctim_aiomsg",
+                                "Cookie:PUID=bf2a0e4f2cf24517c294-a68a65ed8c50;ppi=302c393939;"
+                                ).Replace("{", "\r\n{");
+                            //MessageBox.Show(webSource);
+                            Regex regex = new Regex("\"url\":\"(.*)\",\"capture.*isTrailer\":(.*),\"olt\"");
+                            MatchCollection matches = regex.Matches(webSource);
+                            if (matches.Count == 0)
+                                return;
+                            Button_Go.IsEnabled = false;
+                            TextBox_Input.Text = "";
+                            StringBuilder sb = new StringBuilder();
+                            foreach (Match match in matches)
+                            {
+                                if (match.Groups[2].Value == "false")
+                                    sb.Append(match.Groups[1].Value.Replace("\\/", "/") + "\r\n");
+                            }
+                            TextBox_Input.Text = sb.ToString().Trim();
+                            Button_Go.IsEnabled = true;
+                        }));
+                        return;
+                    }
+
                     foreach (var item in input.Split('\n'))
                     {
                         this.Dispatcher.BeginInvoke(new Action(() =>
@@ -149,7 +183,7 @@ namespace PPTVParser
                         string key = "";
                         Regex fnameRex = new Regex("nm=\"(.*)\".vip", RegexOptions.Compiled);
                         fname = fnameRex.Match(webSource).Groups[1].Value;
-                        Regex fileRex = new Regex("<dt ft=\"4\"[\\s\\S]*<\\/dt>", RegexOptions.Compiled);
+                        Regex fileRex = new Regex("<dt ft=\"" + dfn + "\"[\\s\\S]*<\\/dt>", RegexOptions.Compiled);
                         webSource = fileRex.Match(webSource).Value;
                         fileRex = new Regex("rid=\"(.*mp4)", RegexOptions.Compiled);
                         rid = fileRex.Match(webSource).Groups[1].Value;
@@ -276,6 +310,20 @@ namespace PPTVParser
                     sb.AppendLine(item.Value);
                 File.WriteAllText(saveFileDialog1.FileName, sb.ToString().Trim());
                 MessageBox.Show("已导出");
+            }
+        }
+
+        private void TextBox_Input_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (TextBox_Input == null || Button_Go == null)
+                return;
+            if (TextBox_Input.Text.Split('\n')[0].Contains("/page/")) //批量
+            {
+                Button_Go.Content = "获取全集地址";
+            }
+            else
+            {
+                Button_Go.Content = "开始解析";
             }
         }
     }

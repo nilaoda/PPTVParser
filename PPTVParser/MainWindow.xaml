@@ -5,16 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PPTVParser"
         mc:Ignorable="d"
-        Title="PPTVParser v1.0 by：nilaoda" Height="450" Width="600" WindowStartupLocation="CenterScreen">
+        Title="PPTVParser v2.0 by：nilaoda" Height="450" Width="600" WindowStartupLocation="CenterScreen">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"></RowDefinition>
             <RowDefinition Height="1*"></RowDefinition>
             <RowDefinition Height="3*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" x:Name="TextBox_Input" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Text="http://v.pptv.com/show/4SRRzjacDEqtK5M.html?rcc_src=X2" AcceptsReturn="True"/>
+        <TextBox TextChanged="TextBox_Input_TextChanged" Grid.Row="0" x:Name="TextBox_Input" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Text="http://v.pptv.com/show/4SRRzjacDEqtK5M.html?rcc_src=X2" AcceptsReturn="True"/>
         <Grid Grid.Row="1" Margin="0,5">
-            <Button x:Name="Button_Go" Click="Button_Go_Click">开始解析</Button>
+            <Border Width="1">
+
+            </Border>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition></ColumnDefinition>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <RadioButton Cursor="Hand" Grid.Column="0" x:Name="Radio_0" VerticalAlignment="Center" Content="0档清晰度" />
+                <RadioButton Cursor="Hand" Grid.Column="1" x:Name="Radio_1" VerticalAlignment="Center" Content="1档清晰度" />
+                <RadioButton Cursor="Hand" Grid.Column="2" x:Name="Radio_2" VerticalAlignment="Center" Content="2档清晰度" />
+                <RadioButton Cursor="Hand" Grid.Column="3" x:Name="Radio_3" VerticalAlignment="Center" Content="3档清晰度" />
+                <RadioButton IsChecked="True" Cursor="Hand" Grid.Column="4" x:Name="Radio_4" VerticalAlignment="Center" Content="4档清晰度" />
+                <Button x:Name="Button_Go" Grid.Column="6" Click="Button_Go_Click">开始解析</Button>
+            </Grid>
         </Grid>
         <TextBox Grid.Row="2" x:Name="TextBox_Result" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <TextBox.ContextMenu>
