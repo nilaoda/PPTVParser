@@ -237,7 +237,7 @@ namespace PPTVParser
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("@echo off");
                 sb.AppendLine("::Created by PPTVParser");
-                sb.AppendLine("::\r\n");
+                sb.AppendLine("::https://github.com/nilaoda/PPTVParser/releases\r\n");
                 int i = 0;
                 foreach (var item in results)
                 {
