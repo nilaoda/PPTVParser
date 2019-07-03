@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PPTVParser"
         mc:Ignorable="d"
-        Title="PPTVParser v2.0 by：nilaoda" Height="450" Width="600" WindowStartupLocation="CenterScreen">
+        Title="PPTVParser v3.0 by：nilaoda" Height="450" Width="600" WindowStartupLocation="CenterScreen">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"></RowDefinition>
