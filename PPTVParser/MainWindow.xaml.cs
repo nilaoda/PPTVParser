@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -23,9 +25,23 @@ namespace PPTVParser
             InitializeComponent();
         }
 
+        public static bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            X509Chain verify = new X509Chain();
+            verify.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            verify.ChainPolicy.RevocationMode = X509RevocationMode.Online; //revocation checking  
+            verify.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
+            if (verify.Build(new X509Certificate2(certificate)))
+            {
+                return true;
+            }
+            return false;
+        }
+
         //获取网页源码  
         private static string GetWebSource(String url, string headers = "", int TimeOut = 60000)
         {
+            ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallback;
             string htmlCode = string.Empty;
             try
             {
@@ -143,7 +159,7 @@ namespace PPTVParser
                         {
                             string pid = GetVidFromUrl(input.Split('\n')[0]);
                             string webSource = GetWebSource(
-                                $"http://apis.web.pptv.com/show/videoList?from=web&version=1.0.0&format=jsonp&pid={pid}&cat_id=2&vt=22&tdsourcetag=s_pctim_aiomsg",
+                                $"https://apis.web.pptv.com/show/videoList?from=web&version=1.0.0&format=jsonp&pid={pid}&cat_id=2&vt=22&tdsourcetag=s_pctim_aiomsg",
                                 "Cookie:PUID=bf2a0e4f2cf24517c294-a68a65ed8c50;ppi=302c393939;"
                                 ).Replace("{", "\r\n{");
                             //MessageBox.Show(webSource);
@@ -175,7 +191,7 @@ namespace PPTVParser
                         string vid = GetVidFromUrl(item);
                         if (vid == "")
                             continue;
-                        string api = $"http://play.api.pptv.com/boxplay.api?platform=atv&type=pad.android.download&id={vid}";
+                        string api = $"https://play.api.pptv.com/boxplay.api?platform=launcher&type=tv.android&id={vid}";
                         string webSource = new WebClient() { Encoding = Encoding.UTF8 }.DownloadString(api);
                         string fname = "";
                         string rid = "";
@@ -193,7 +209,7 @@ namespace PPTVParser
                         key = fileRex.Match(webSource).Groups[1].Value;
                         if (sh == "" || rid == "" || key == "")
                             continue;
-                        string videourl = $"http://{sh}/w/{rid}?platform=atv&type=pad.android.download&k={key}";
+                        string videourl = $"https://{sh}/w/{rid}?platform=launcher&type=tv.android&k={key}";
                         results.Add(fname, videourl);
                         this.Dispatcher.BeginInvoke(new Action(() => TextBox_Result.AppendText(videourl + "\r\n")));
                     }
@@ -233,7 +249,7 @@ namespace PPTVParser
 
             if (saveFileDialog1.ShowDialog() == true) 
             {
-                string headers = "User-Agent:Mozilla/5.0 (Linux; U; Android 7.1.2; zh-cn; M6 Note Build/N2G47H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.6 Mobile Safari/537.36";
+                string headers = "User-Agent:Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLine("@echo off");
                 sb.AppendLine("::Created by PPTVParser");
@@ -254,7 +270,7 @@ namespace PPTVParser
             if (results.Count == 0)
                 return;
             string dir = "";
-            string headers = "Mozilla/5.0 (Linux; U; Android 7.1.2; zh-cn; M6 Note Build/N2G47H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/8.6 Mobile Safari/537.36";
+            string headers = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;)";
             FolderBrowserDialog openFileDialog = new FolderBrowserDialog();  //选择文件夹
             openFileDialog.Description = "选择一个目录，视频将会下载到此处";
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
